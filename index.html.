@@ -1,1 +1,168 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dyson Swarm</title>
 
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #02030a;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    #ui {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      padding: 18px;
+      border: 1px solid #555;
+      border-radius: 15px;
+      background: rgba(10, 10, 20, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0 0 10px;
+      font-size: 22px;
+    }
+
+    button {
+      margin-top: 12px;
+      padding: 10px;
+      border: 0;
+      border-radius: 10px;
+      background: white;
+      color: black;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+<canvas id="space"></canvas>
+
+<div id="ui">
+  <h1>☀️ DYSON SWARM</h1>
+
+  <div>
+    Collectors: <span id="count">0</span><br>
+    Energy: <span id="power">0</span> TW
+  </div>
+
+  <button onclick="addCollector()">
+    🚀 Deploy Collector
+  </button>
+</div>
+
+<script>
+
+const canvas = document.getElementById("space");
+const ctx = canvas.getContext("2d");
+
+canvas.width = innerWidth;
+canvas.height = innerHeight;
+
+const cx = canvas.width / 2;
+const cy = canvas.height / 2;
+
+let collectors = [];
+let energy = 0;
+
+function addCollector() {
+
+  collectors.push({
+    angle: Math.random() * Math.PI * 2,
+    radius: 120 + Math.random() * 180,
+    speed: 0.002 + Math.random() * 0.004
+  });
+
+  energy += 4;
+
+  document.getElementById("count").textContent =
+    collectors.length;
+
+  document.getElementById("power").textContent =
+    energy;
+}
+
+function drawStar() {
+
+  const glow = ctx.createRadialGradient(
+    cx, cy, 10,
+    cx, cy, 80
+  );
+
+  glow.addColorStop(0, "white");
+  glow.addColorStop(0.2, "#ffffaa");
+  glow.addColorStop(0.5, "#ffaa22");
+  glow.addColorStop(1, "transparent");
+
+  ctx.fillStyle = glow;
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 80, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "#fff3a0";
+
+  ctx.beginPath();
+  ctx.arc(cx, cy, 28, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function drawCollector(c) {
+
+  const x = cx + Math.cos(c.angle) * c.radius;
+  const y = cy + Math.sin(c.angle) * c.radius;
+
+  ctx.fillStyle = "#66ccff";
+
+  ctx.beginPath();
+  ctx.arc(x, y, 4, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function animate() {
+
+  ctx.fillStyle = "#02030a";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  // Background stars
+  for (let i = 0; i < 100; i++) {
+
+    ctx.fillStyle = "rgba(255,255,255,0.5)";
+
+    ctx.fillRect(
+      Math.random() * canvas.width,
+      Math.random() * canvas.height,
+      1,
+      1
+    );
+  }
+
+  drawStar();
+
+  collectors.forEach(c => {
+
+    c.angle += c.speed;
+
+    drawCollector(c);
+
+  });
+
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>
+
+</body>
+</html>
